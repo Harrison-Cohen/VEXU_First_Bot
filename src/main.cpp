@@ -83,7 +83,7 @@ void opcontrol() {
 
 	while (true) {
 
-		isTankDrive = drivetrian::isSwitchingModes(isTankDrive);
+		isTankDrive = drivetrian::userSwitchingModes(isTankDrive);
 
 		if(isTankDrive){
 			drivetrian::tankDrive();

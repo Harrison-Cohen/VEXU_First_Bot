@@ -5,5 +5,5 @@ namespace drivetrian{
 
     void arcadeDrive();
 
-    bool isSwitchingModes(bool currentMode);
+    bool userSwitchingModes(bool currentMode);
 }

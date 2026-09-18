@@ -41,7 +41,7 @@ namespace drivetrian{
         rightMotorGroup.move(std::round(rightSum * multiplier));
     }
 
-    bool isSwitchingModes(bool currentMode){
+    bool userSwitchingModes(bool currentMode){
         if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) == 1){
             return !currentMode;
         }
