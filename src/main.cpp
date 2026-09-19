@@ -4,8 +4,6 @@
 
 static bool isTankDrive {true};
 
-
-
 /**
  * A callback function for LLEMU's center button.
  *

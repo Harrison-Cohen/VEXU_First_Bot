@@ -20,12 +20,15 @@ namespace drivetrian{
 
     //blend movements into one stick
     void arcadeDrive(){
+        //initalize as one to keep value same if within bounds of [-127, 127]
         double multiplier {1};
         
         //take in the stick vlaue for each stick and blend them
         //not using brace initalization b/c of warnings thrown
         double leftSum = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) + master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //left is y + x b/c the left side powers right turning 
         double rightSum = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) - master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //right is y - x b/c the right side powers left turning 
 
         //handels wrapping by dividing by same multiple to maintin users intended input for each movement 
         if(leftSum > 127 || leftSum < -127){
@@ -35,7 +38,7 @@ namespace drivetrian{
             multiplier = std::abs(127/rightSum);
         }
 
-        //takes the sum of the cordinates for each sides of the stick and handels wrapping 
+        //takes the sum of the cordinates for each sides of the stick and handels overflow by keeping ratio and maxing each side out at [-127, 127]
         leftMotorGroup.move(std::round(leftSum * multiplier));
 
         rightMotorGroup.move(std::round(rightSum * multiplier));
