@@ -1,6 +1,6 @@
 #pragma once
 
-namespace drivetrian{
+namespace drivetrain{
     void tankDrive();
 
     void arcadeDrive();

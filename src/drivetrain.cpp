@@ -3,7 +3,7 @@
 #include "api.h"
 #include <cmath>
 
-namespace drivetrian{
+namespace drivetrain{
 
     static pros::MotorGroup leftMotorGroup({constants::FLMotorPort, constants::BLMotorPort}, constants::drivetrainGearRatio);
     static pros::MotorGroup rightMotorGroup({constants::FRMotorPort, constants::BRMotorPort}, constants::drivetrainGearRatio);
@@ -18,7 +18,7 @@ namespace drivetrian{
         rightMotorGroup.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
     }
 
-    //blend movements into one stick
+    //blend movements into two sticks
     void arcadeDrive(){
         //initalize as one to keep value same if within bounds of [-127, 127]
         double multiplier {1};

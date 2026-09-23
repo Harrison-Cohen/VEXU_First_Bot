@@ -81,13 +81,13 @@ void opcontrol() {
 
 	while (true) {
 
-		isTankDrive = drivetrian::userSwitchingModes(isTankDrive);
+		isTankDrive = drivetrain::userSwitchingModes(isTankDrive);
 
 		if(isTankDrive){
-			drivetrian::tankDrive();
+			drivetrain::tankDrive();
 		}
 		else{
-			drivetrian::arcadeDrive();
+			drivetrain::arcadeDrive();
 		}
 		pros::delay(20);                               // Run for 20 ms then update
 	}
