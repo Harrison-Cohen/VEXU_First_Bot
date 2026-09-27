@@ -6,8 +6,76 @@
 
 namespace drivetrain{
 
-    static pros::MotorGroup leftMotorGroup({constants::leftMotorOne, constants::leftMotorTwo, constants::leftMotorThree}, constants::drivetrainGearRatio);
-    static pros::MotorGroup rightMotorGroup({constants::rightMotorOne, constants::rightMotorTwo, constants::rightMotorThree}, constants::drivetrainGearRatio);
+    static bool isTankDrive {true};
+    static bool isCustomArcade {false};
+
+    static pros::MotorGroup leftMotorGroup(
+        {constants::leftMotorOne,
+        constants::leftMotorTwo,
+        constants::leftMotorThree},
+        constants::drivetrainGearRatio);
+
+    static pros::MotorGroup rightMotorGroup(
+        {constants::rightMotorOne, 
+        constants::rightMotorTwo, 
+        constants::rightMotorThree}, 
+        constants::drivetrainGearRatio);
+
+    pros::Imu imu(constants::imu);
+
+    //read documentation to understand each param
+    static lemlib::Drivetrain drivetrain(
+        &leftMotorGroup, 
+        &rightMotorGroup, 
+        10, 
+        lemlib::Omniwheel::NEW_325,
+        450, 
+        2
+    );
+
+    static lemlib::ControllerSettings lateralController(
+        5,  //P
+        0,  //I
+        0,  //D
+        0,
+        0,
+        0,
+        0,
+        0,
+        3  //slew rate
+    );
+
+    static lemlib::ControllerSettings angularController(
+        5,  //P
+        0,  //I
+        0,  //D
+        0,
+        0,
+        0,
+        0,
+        0,
+        3  //slew rate
+    );
+
+    static lemlib::OdomSensors sensors(
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        &imu
+    );
+
+    lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);
+    lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
+
+    static lemlib::Chassis chassis(
+        drivetrain,
+        lateralController,
+        angularController,
+        sensors,
+        &throttleCurve,
+        &steerCurve
+    );
 
     void tankDrive(){
         //left side of bot
@@ -18,7 +86,7 @@ namespace drivetrain{
     }
 
     //blend movements into two sticks
-    void arcadeDrive(){
+    void customArcadeDrive(){
         //initalize as one to keep value same if within bounds of [-127, 127]
         double multiplier {1};
         
@@ -43,12 +111,39 @@ namespace drivetrain{
         rightMotorGroup.move(std::round(rightSum * multiplier));
     }
 
-    bool userSwitchingModes(bool currentMode){
+    void userSwitchingModes(){
         if(constants::master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) == 1){
-            return !currentMode;
+            if(isTankDrive && !isCustomArcade){
+                isTankDrive = false;
+                isCustomArcade = true;
+            }
+            else if(!isTankDrive && isCustomArcade){
+                isTankDrive = false;
+                isCustomArcade = false;
+            }
+            else{
+                isTankDrive = true;
+                isCustomArcade = false;
+            }
         }
-        return currentMode;
     }
 
-    void lemlibArcade(){}
+    void lemlibArcade(){
+        int leftY {constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)};
+        int rightX {constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)};
+
+        chassis.arcade(leftY, rightX);
+    }
+
+    void drive(){
+        if(isTankDrive){
+            tankDrive();
+        }
+        else if(isCustomArcade){
+            customArcadeDrive();
+        }
+        else{
+            lemlibArcade();
+        }
+    }
 }

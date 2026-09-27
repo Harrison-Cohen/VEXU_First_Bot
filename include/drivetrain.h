@@ -3,9 +3,11 @@
 namespace drivetrain{
     void tankDrive();
 
-    void arcadeDrive();
+    void customArcadeDrive();
 
     void limlibArcade();
 
-    bool userSwitchingModes(bool currentMode);
+    void userSwitchingModes();
+
+    void drive();
 }

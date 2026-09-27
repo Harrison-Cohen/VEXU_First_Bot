@@ -19,6 +19,7 @@ namespace constants{
 
     //misc
     constexpr int radio {8};
+    constexpr int imu {10};
 
     //motor gear ratios 
     constexpr pros::v5::MotorGears drivetrainGearRatio {pros::v5::MotorGears::green};

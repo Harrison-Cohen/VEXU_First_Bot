@@ -3,8 +3,6 @@
 #include "constants.h"
 #include "elevator.h"
 
-static bool isTankDrive {true};
-
 /**
  * A callback function for LLEMU's center button.
  *
@@ -79,20 +77,9 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	drivetrain::drive();
 
-	while (true) {
+	elevator::manualCommand();
 
-		isTankDrive = drivetrain::userSwitchingModes(isTankDrive);
-
-		if(isTankDrive){
-			drivetrain::tankDrive();
-		}
-		else{
-			drivetrain::arcadeDrive();
-		}
-
-		elevator::manualCommand();
-
-		pros::delay(20);                               // Run for 20 ms then update
-	}
+	pros::delay(20);                               // Run for 20 ms then update
 }
