@@ -24,6 +24,7 @@ namespace drivetrain{
     pros::Imu imu(constants::imu);
 
     //read documentation to understand each param
+    //TODO tune to real bot 
     static lemlib::Drivetrain drivetrain(
         &leftMotorGroup, 
         &rightMotorGroup, 
@@ -33,6 +34,7 @@ namespace drivetrain{
         2
     );
 
+    //TODO tune
     static lemlib::ControllerSettings lateralController(
         5,  //P
         0,  //I
@@ -45,6 +47,7 @@ namespace drivetrain{
         3  //slew rate
     );
 
+    //TODO tune
     static lemlib::ControllerSettings angularController(
         5,  //P
         0,  //I
@@ -57,6 +60,7 @@ namespace drivetrain{
         3  //slew rate
     );
 
+    //TODO tune
     static lemlib::OdomSensors sensors(
         nullptr,
         nullptr,
@@ -65,6 +69,7 @@ namespace drivetrain{
         &imu
     );
 
+    //TODO tune
     lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);
     lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
 
