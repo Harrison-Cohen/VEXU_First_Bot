@@ -5,5 +5,7 @@ namespace drivetrain{
 
     void arcadeDrive();
 
+    void limlibArcade();
+
     bool userSwitchingModes(bool currentMode);
 }

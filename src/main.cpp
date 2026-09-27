@@ -1,6 +1,7 @@
 #include "main.h"
 #include "drivetrain.h"
 #include "constants.h"
+#include "elevator.h"
 
 static bool isTankDrive {true};
 
@@ -89,6 +90,9 @@ void opcontrol() {
 		else{
 			drivetrain::arcadeDrive();
 		}
+
+		elevator::manualCommand();
+
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }

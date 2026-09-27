@@ -1,21 +1,20 @@
 #include "drivetrain.h"
 #include "constants.h"
 #include "api.h"
+#include "lemlib/api.hpp"
 #include <cmath>
 
 namespace drivetrain{
 
-    static pros::MotorGroup leftMotorGroup({constants::FLMotorPort, constants::BLMotorPort}, constants::drivetrainGearRatio);
-    static pros::MotorGroup rightMotorGroup({constants::FRMotorPort, constants::BRMotorPort}, constants::drivetrainGearRatio);
-
-    static pros::v5::Controller master({pros::E_CONTROLLER_MASTER});
+    static pros::MotorGroup leftMotorGroup({constants::leftMotorOne, constants::leftMotorTwo, constants::leftMotorThree}, constants::drivetrainGearRatio);
+    static pros::MotorGroup rightMotorGroup({constants::rightMotorOne, constants::rightMotorTwo, constants::rightMotorThree}, constants::drivetrainGearRatio);
 
     void tankDrive(){
         //left side of bot
-        leftMotorGroup.move(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+        leftMotorGroup.move(constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
 
         //right side of bot
-        rightMotorGroup.move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+        rightMotorGroup.move(constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
     }
 
     //blend movements into two sticks
@@ -25,10 +24,10 @@ namespace drivetrain{
         
         //take in the stick vlaue for each stick and blend them
         //not using brace initalization b/c of warnings thrown
-        double leftSum = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) + master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        //left is y + x b/c the left side powers right turning 
-        double rightSum = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) - master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        //right is y - x b/c the right side powers left turning 
+        double leftSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) - constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //left is y - x (sign flipped to match this robot's motor layout) 
+        double rightSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) + constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //right is y + x (sign flipped to match this robot's motor layout) 
 
         //handels wrapping by dividing by same multiple to maintin users intended input for each movement 
         if(leftSum > 127 || leftSum < -127){
@@ -45,9 +44,11 @@ namespace drivetrain{
     }
 
     bool userSwitchingModes(bool currentMode){
-        if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) == 1){
+        if(constants::master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) == 1){
             return !currentMode;
         }
         return currentMode;
     }
+
+    void lemlibArcade(){}
 }
