@@ -77,9 +77,13 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	//drivetrain commands
+	drivetrain::userSwitchingModes();
 	drivetrain::drive();
 
+	//eelvator commands
 	elevator::manualCommand();
 
-	pros::delay(20);                               // Run for 20 ms then update
+	//20ms periodic delay
+	pros::delay(20);
 }
