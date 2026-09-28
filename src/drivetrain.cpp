@@ -6,8 +6,7 @@
 
 namespace drivetrain{
 
-    static bool isTankDrive {true};
-    static bool isCustomArcade {false};
+    static Mode currentMode {Mode::lemlibArcade};
 
     static pros::MotorGroup leftMotorGroup(
         {constants::leftMotorOne,
@@ -30,7 +29,7 @@ namespace drivetrain{
         &rightMotorGroup, 
         10, 
         lemlib::Omniwheel::NEW_325,
-        450, 
+        200, 
         2
     );
 
@@ -38,13 +37,13 @@ namespace drivetrain{
     static lemlib::ControllerSettings lateralController(
         5,  //P
         0,  //I
-        0,  //D
+        8,  //D
         0,
         0,
         0,
         0,
         0,
-        3  //slew rate
+        15  //slew rate
     );
 
     //TODO tune
@@ -97,10 +96,10 @@ namespace drivetrain{
         
         //take in the stick vlaue for each stick and blend them
         //not using brace initalization b/c of warnings thrown
-        double leftSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) - constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        //left is y - x (sign flipped to match this robot's motor layout) 
-        double rightSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) + constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        //right is y + x (sign flipped to match this robot's motor layout) 
+        double leftSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) + constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //left is y + x
+        double rightSum = constants::master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) - constants::master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        //right is y - x
 
         //handels wrapping by dividing by same multiple to maintin users intended input for each movement 
         if(leftSum > 127 || leftSum < -127){
@@ -117,19 +116,23 @@ namespace drivetrain{
     }
 
     void userSwitchingModes(){
-        if(constants::master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X) == 1){
-            if(isTankDrive && !isCustomArcade){
-                isTankDrive = false;
-                isCustomArcade = true;
-            }
-            else if(!isTankDrive && isCustomArcade){
-                isTankDrive = false;
-                isCustomArcade = false;
-            }
-            else{
-                isTankDrive = true;
-                isCustomArcade = false;
-            }
+        if(constants::master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+            switch(currentMode){
+                case Mode::tank:
+                currentMode = Mode::customArcade;
+                constants::master.rumble(".");
+                break;
+
+                case Mode::customArcade:
+                constants::master.rumble(".");
+                currentMode = Mode::lemlibArcade;
+                break;
+
+                case Mode::lemlibArcade:
+                constants::master.rumble(".");
+                currentMode = Mode::tank;
+                break;
+            }  
         }
     }
 
@@ -141,14 +144,24 @@ namespace drivetrain{
     }
 
     void drive(){
-        if(isTankDrive){
+        switch(currentMode){
+            case Mode::tank:
             tankDrive();
-        }
-        else if(isCustomArcade){
+            break;
+
+            case Mode::customArcade:
             customArcadeDrive();
-        }
-        else{
+            break;
+
+            case Mode::lemlibArcade:
             lemlibArcade();
+            break;
         }
+    }
+
+    void init(){
+        leftMotorGroup.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
+        rightMotorGroup.set_brake_mode_all(pros::E_MOTOR_BRAKE_COAST);
+        chassis.calibrate();
     }
 }

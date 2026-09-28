@@ -8,4 +8,12 @@ namespace elevator{
 
     void addIncrement();
 
+    void startHoming();
+
+    void init();
+
+    void update();
+
+    void handleInput();
+
 }

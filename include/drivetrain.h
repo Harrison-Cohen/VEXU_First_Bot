@@ -1,13 +1,22 @@
 #pragma once
 
 namespace drivetrain{
+    enum class Mode
+    {
+        tank,
+        customArcade,
+        lemlibArcade
+    };
+
     void tankDrive();
 
     void customArcadeDrive();
 
-    void limlibArcade();
+    void lemlibArcade();
 
     void userSwitchingModes();
 
     void drive();
+
+    void init();
 }

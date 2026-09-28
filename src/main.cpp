@@ -2,22 +2,7 @@
 #include "drivetrain.h"
 #include "constants.h"
 #include "elevator.h"
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
+#include "endeffector.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -26,10 +11,8 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+	drivetrain::init();
+	elevator::init();
 }
 
 /**
@@ -77,13 +60,18 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	//drivetrain commands
-	drivetrain::userSwitchingModes();
-	drivetrain::drive();
 
-	//eelvator commands
-	elevator::manualCommand();
+	endeffector::init();
 
-	//20ms periodic delay
-	pros::delay(20);
+	while(true){
+		//drivetrain commands
+		drivetrain::drive();
+
+		//elevator commands
+		elevator::handleInput();
+		elevator::update();
+
+		//20ms periodic delay
+		pros::delay(20);
+	}
 }

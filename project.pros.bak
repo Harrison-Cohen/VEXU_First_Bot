@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "15_bot_v_1",
+        "project_name": "x_drive_v1",
         "target": "v5",
         "templates": {
             "LemLib": {
