@@ -6,6 +6,8 @@
 
 namespace drivetrain{
 
+        enum class Mode {tank, customArcade, lemlibArcade};
+
     static Mode currentMode {Mode::lemlibArcade};
 
     static pros::MotorGroup leftMotorGroup(

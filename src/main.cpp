@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "elevator.h"
 #include "endeffector.h"
+#include "commands.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -13,6 +14,7 @@
 void initialize() {
 	drivetrain::init();
 	elevator::init();
+	endeffector::init();
 }
 
 /**
@@ -61,15 +63,20 @@ void autonomous() {}
  */
 void opcontrol() {
 
-	endeffector::init();
-
 	while(true){
 		//drivetrain commands
 		drivetrain::drive();
 
-		//elevator commands
+		//elevator control
 		elevator::handleInput();
 		elevator::update();
+
+		//end effector control
+		endeffector::handleInputs();
+		endeffector::update();
+
+		//commands
+		commands::score();
 
 		//20ms periodic delay
 		pros::delay(20);

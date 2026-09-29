@@ -6,7 +6,7 @@
 
 namespace elevator{
 
-    pros::MotorGroup elevatorMotors ({constants::leftElevator, constants::rightElevator}, constants::elevatorGearRatio);
+    pros::MotorGroup elevatorMotors ({constants::rightElevator, constants::leftElevator}, constants::elevatorGearRatio);
 
     //Homing: timed home, only used on startup
     //Returning: driving to encoder zero with position control (B tap)
@@ -61,26 +61,18 @@ namespace elevator{
         }
     }
 
-    void setGeneralState(){
-
-    }
-
-    void addIncrement(){
-
-    }
-
-    void init(){
-        elevatorMotors.set_encoder_units_all(pros::MotorUnits::rotations);
-        elevatorMotors.set_brake_mode_all(pros::E_MOTOR_BRAKE_HOLD);
-        startHoming();
-    }
-
     //request a home. the timer starts on the first update() after this, not here,
     //because init() runs long before opcontrol when plugged into field control
     void startHoming(){
         currentMode = Mode::Homing;
         level = 0;
         homingStartTime = 0;
+    }
+
+    void init(){
+        elevatorMotors.set_encoder_units_all(pros::MotorUnits::rotations);
+        elevatorMotors.set_brake_mode_all(pros::E_MOTOR_BRAKE_HOLD);
+        startHoming();
     }
 
     void update(){
@@ -92,11 +84,11 @@ namespace elevator{
                     homingStartTime = pros::millis();
                 }
 
-                std::uint32_t elapsed {pros::millis() - homingStartTime};
+                int elapsed {pros::millis() - homingStartTime};
 
                 if(elapsed < constants::elevatorHomingTimeMs){
                     //still driving down. move_voltage takes millivolts, so convert from volts
-                    elevatorMotors.move_voltage(static_cast<int>(constants::elevatorHomingVolts * 1000));
+                    elevatorMotors.move(constants::elevatorHomingVolts);
                 }
                 else{
                     //driven down long enough to be sitting on the bottom, zero here
@@ -141,7 +133,7 @@ namespace elevator{
 
             case Mode::ManualHoming:
                 //push down while B is held. handleInput zeroes and stows when B is released
-                elevatorMotors.move_voltage(static_cast<int>(constants::elevatorHomingVolts * 1000));
+                elevatorMotors.move(constants::elevatorHomingVolts);
                 break;
         }
     }
@@ -251,4 +243,15 @@ namespace elevator{
         }
     }
 
+    //helpers for commands
+    void requestStow(){
+        stow();
+    }
+
+    bool isElevatorStowed(){
+        if(!(currentMode == Mode::Stowed)){
+            return false;
+        }
+        return true;
+    }
 }
