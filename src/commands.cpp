@@ -27,7 +27,7 @@ namespace commands{
             case(scoreState::WaitingToDrop):
             //elevator is already coming down, prongs hold where they are until the delay passes
             if(pros::millis() - scoreStartTime >= constants::scoreDropDelayMs){
-                endeffector::requestStow();
+                endeffector::requestTop();
                 currentScoreState = scoreState::WaitingForElevator;
             }
             break;

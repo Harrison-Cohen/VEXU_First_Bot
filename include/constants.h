@@ -18,7 +18,7 @@ namespace constants{
     //elevator motors
     constexpr int leftElevator {6};
     constexpr int rightElevator {-19};
-    constexpr double maxMotorRotations {7};
+    constexpr double maxMotorRotations {6.4};
 
     //end effector motors
     constexpr int leftEndEffectorMotor {10};
@@ -33,17 +33,17 @@ namespace constants{
     constexpr double elevatorHomingVolts {-127.0/2};
     constexpr int elevatorHomingTimeMs {250};
     constexpr double elevatorZeroTolerance {0.5};
-    //if zero isn't reached by this time, give up and unlock (hold B to re-home), in ms
-    constexpr int elevatorReturnTimeoutMs {2000};
-    //hold B longer than this to manually home (push down until released, zero on release), in ms
+    constexpr int elevatorReturnTimeoutMs {4000};
     constexpr int elevatorHoldToHomeMs {300};
 
     //elevator positioning
     //max speed for move_absolute, in rpm (green cartridge tops out at 200)
-    constexpr int elevatorMoveVelocity {150};
+    constexpr int elevatorMoveVelocity {200};
+    //power while holding Up/Down in manual, -127 to 127 for move()
+    constexpr int elevatorManualPower {127};
 
     //--------  endEffector constants  -------- 
-    //max speed for move_absolute, in rpm. green cartridge tops out at 200, so 50 is 25%
+    //max speed 200 rpm
     constexpr int endEffectorMoveVelocity {50}; 
 
     //these are in terms of degress since vex is butt and makes it hareder for radians :(

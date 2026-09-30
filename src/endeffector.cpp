@@ -8,10 +8,10 @@
 namespace endeffector{
     pros::Motor endEffector(constants::leftEndEffectorMotor, constants::endEffectorGears);
 
-    static int homingStartTime {0};
+    static uint32_t homingStartTime {0};
     static bool homed {false};
 
-    enum class Mode{Homing, Stowed, PickUp, High};
+    enum class Mode{Homing, Stowed, PickUp, High, Top};
 
     Mode currentMode {Mode::Homing};
 
@@ -39,7 +39,7 @@ namespace endeffector{
                 homingStartTime = pros::millis();
             }
 
-            int elapsed {pros::millis() - homingStartTime};
+            uint32_t elapsed {pros::millis() - homingStartTime};
 
             if(elapsed < constants::endEffectorHomingTimeMs){
                     //pushing up into the top hard stop
@@ -65,6 +65,12 @@ namespace endeffector{
 
             case(Mode::High):
             endEffector.move_absolute(toMotorDeg(constants::endEffectorTopDeg), constants::endEffectorMoveVelocity);
+            break;
+
+            case(Mode::Top):
+            //the encoder is zeroed at the top hard stop, so 0 is the stop itself.
+            //skips toMotorDeg on purpose: its clamp would cap this at endEffectorTopDeg
+            endEffector.move_absolute(0, constants::endEffectorMoveVelocity);
             break;
         }
     }
@@ -105,12 +111,20 @@ namespace endeffector{
                 break;
             }
             break;
+
+            case(Mode::Top):
+            //only the score command sends the prongs here, so R1/L1 are ignored until it sends them back to PickUp
+            break;
         }
     }
 
     //helpers for commands 
     void requestStow(){
         currentMode = Mode::Stowed;
+    }
+
+    void requestTop(){
+        currentMode = Mode::Top;
     }
 
     void requestPickUp(){

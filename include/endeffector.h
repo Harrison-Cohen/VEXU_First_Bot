@@ -10,4 +10,6 @@ namespace endeffector{
     void requestStow();
 
     void requestPickUp();
+
+    void requestTop();
 }
