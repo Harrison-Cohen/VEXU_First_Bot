@@ -131,5 +131,3 @@ namespace endeffector{
         currentMode = Mode::PickUp;
     }
 }
-
-
